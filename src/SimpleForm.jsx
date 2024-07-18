@@ -9,6 +9,19 @@ const SimpleForm = () => {
         email:"",
         password:"",
     })
+
+    // let[isLogin,setisLogin]=useState(false)
+
+    let passwordRegex = /(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/
+    let emailRegex = /(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/
+    let usernameRegex = /^[a-zA-Z0-9]{3,}$/
+
+    let[userDataError,setuserDataError]=useState({
+        username:false,
+        email:false,
+        password:false
+    })    
+
     const handleInputData=(e)=>{
         e.preventDefault();
         let{name,value}=e.target
@@ -18,9 +31,8 @@ const SimpleForm = () => {
     }
     const handlesubmit=(e)=>{
         e.preventDefault();
-        // let{username,email,password}=userData
-        if(userData.email.length > 0 && userData.password.length > 0 && userData.username.length > 0){
-            toast.success('Wow so easy!', {
+        if(passwordRegex.test(userData.password) && emailRegex.test(userData.email) && usernameRegex.test(userData.username)){
+            toast.success('Success!', {
                 position: "top-center",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -31,7 +43,8 @@ const SimpleForm = () => {
                 theme: "dark",
                 transition: Slide,
                 });
-        }
+            setuserDataError({...userDataError,password:false,email:false,username:false})
+        }   
         else{
             toast.warn('Fail!', {
                 position: "top-center",
@@ -44,24 +57,29 @@ const SimpleForm = () => {
                 theme: "dark",
                 transition: Slide,
                 });
+            setuserDataError({...userDataError,password:true,email:true,username:true})
         }
+        console.log(userDataError);
     }
   return (
     <div>
-        <ToastContainer/>
-        <h1>Student From</h1>
+        <ToastContainer/>           
         <form onSubmit={handlesubmit}>
+            <h1>Student SignUp From</h1>
             <label>UserName : </label>
-            <input type="text" value={userData.username} name='username' placeholder='Enter Your UserName' onChange={handleInputData} />
+            <input type="text" value={userData.username} name='username' placeholder='Enter Your UserName' onChange={handleInputData} 
+             style={{borderColor:userDataError.username ? "red":userData.username.length>0  ? "green" : "black"}}/>
             <br/>
             <label>Email : </label>
-            <input type="email" value={userData.email} name='email' placeholder='Enter Your Email' onChange={handleInputData} />
+            <input type="email" value={userData.email} name='email' placeholder='Enter Your Email' onChange={handleInputData}
+              style={{borderColor:userDataError.email ? "red":userData.email.length>0  ? "green" : "black"}} />
             <br/>
             <label>PassWord : </label>
-            <input type="text" value={userData.password} name='password' placeholder='Enter Your Password' onChange={handleInputData} />
+            <input type="text" value={userData.password} name='password' placeholder='Enter Your Password' onChange={handleInputData}
+              style={{borderColor:userDataError.password ? "red":userData.password.length>0  ? "green" : "black"}}  />
             <br/>
-            <input type="submit" />
-        </form>
+            <input type="submit" value="SignUp"/>
+        </form> 
     </div>
   )
 }
